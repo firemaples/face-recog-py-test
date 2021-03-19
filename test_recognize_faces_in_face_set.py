@@ -8,7 +8,11 @@ tolerance=0.6
 
 path_recog = sys.argv[1]
 
-print("\n******** Start to recognize [{}] with the tolerance: {} ********\n".format(path_recog, tolerance))
+print("\n")
+print("% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %")
+print("% % % Start to recognize [{}] with the tolerance: {} % % %".format(path_recog, tolerance))
+print("% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %")
+print("\n")
 
 start_time=time.time()
 
@@ -64,9 +68,13 @@ for f in range(len(encoding_recogs)):
             nearest_name = name
             nearest_distance = d
     if nearest_distance <= tolerance:
-        print("#### Face[{}] may be [{}]({}) ####\n".format(f, nearest_name, nearest_distance))
+        print("#####################################################################")
+        print("#### Face[{}] MAY BE [{}]({}) ####".format(f, nearest_name, nearest_distance))
+        print("#####################################################################")
     else:
-        print("#### Face[{}] is unrecognized, the nearest one is [{}]({}) ####\n".format(f, nearest_name, nearest_distance))
+        print("#####################################################################")
+        print("#### Face[{}] is UNRECONIZED, the nearest one is [{}]({}) ####".format(f, nearest_name, nearest_distance))
+        print("#####################################################################")
 print("**** Computing distance(s) spent {} secs ****\n".format(time.time() - start_time))
 
 #try:
