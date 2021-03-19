@@ -1,10 +1,14 @@
 import sys
-path_recog = sys.argv[1]
-
-print("\n******** Start [{}] ********\n".format(path_recog))
-
+import numpy as np
 import time
 from os import walk
+import face_recognition
+
+tolerance=0.6
+
+path_recog = sys.argv[1]
+
+print("\n******** Start to recognize [{}] with the tolerance: {} ********\n".format(path_recog, tolerance))
 
 start_time=time.time()
 
@@ -18,8 +22,6 @@ print("\n".join(map(str, fileNames)))
 print("**** Finding {} file name(s) in '{}' spent {} secs".format(len(fileNames), knownFaceSetPath,time.time() - start_time) + " ****\n")
 
 # Load the jpg files into numpy arrays
-import face_recognition
-
 start_time=time.time()
 knownImages = []
 for fileName in fileNames:
@@ -47,15 +49,24 @@ encoding_recogs = []
 encoding_recogs.extend(face_recognition.face_encodings(image_recog))
 print("**** Loading & encoding {} face(s) [{}] to recognize spent {} secs ****\n".format(len(encoding_recogs), path_recog, time.time() - start_time))
 
-import numpy
-
 start_time=time.time()
-face_encodings_np = numpy.array(face_encodings)
+face_encodings_np = np.array(face_encodings)
 print("Start to computing the distance between {} known encoding(s) and {} unknown face(s)".format(len(face_encodings_np), len(encoding_recogs)))
 for f in range(len(encoding_recogs)):
+    nearest_name = ""
+    nearest_distance = 999
     face_distances = face_recognition.face_distance(face_encodings_np, encoding_recogs[f])
     for i in range(len(face_distances)):
-        print("The distance between face[{}] and {}: {}".format(f, fileNames[i], face_distances[i]))
+        d=face_distances[i]
+        name=fileNames[i]
+        print("Face[{}] distance {}: {}".format(f, name, d))
+        if d < nearest_distance:
+            nearest_name = name
+            nearest_distance = d
+    if nearest_distance <= tolerance:
+        print("#### Face[{}] may be [{}]({}) ####\n".format(f, nearest_name, nearest_distance))
+    else:
+        print("#### Face[{}] is unrecognized, the nearest one is [{}]({}) ####\n".format(f, nearest_name, nearest_distance))
 print("**** Computing distance(s) spent {} secs ****\n".format(time.time() - start_time))
 
 #try:
